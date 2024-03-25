@@ -7,6 +7,7 @@ const StockSchema = new mongoose.Schema({
   },
   company: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "companies",
     required: true,
   },
   size: {
@@ -18,7 +19,7 @@ const StockSchema = new mongoose.Schema({
     required: true,
   },
   color: {
-    type: Array,
+    type: String,
   }
 }, {collection: "stock"});
 

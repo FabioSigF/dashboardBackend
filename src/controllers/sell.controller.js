@@ -6,24 +6,21 @@ import {
 
 const create = async (req, res) => {
   try {
-    const { item, size, amount, color } = req.body;
+    const { items, total_price, school } = req.body;
 
-    if (!item || !size || !amount) {
+    if (!items || !total_price || !school) {
       return res
         .status(400)
-        .send({ message: "Todos os campos devem ser preenchidos." });
+        .send({ message: "Não foi possível concluir a venda! Todos os campos devem ser preenchidos." });
     }
 
     await createItemSellService({
-      item,
-      size,
-      amount,
-      color,
+      items,
+      total_price,
+      school,
     });
 
-    return res
-      .status(201)
-      .send({ message: "Venda realizada com sucesso!" });
+    return res.status(201).send({ message: "Venda realizada com sucesso!" });
   } catch (err) {
     return res.status(500).send(err.message);
   }
@@ -31,15 +28,13 @@ const create = async (req, res) => {
 
 const findAll = async (req, res) => {
   try {
-    const stock = await findAllItemSellService();
+    const sellings = await findAllItemSellService();
 
-    if (stock.length === 0) {
-      return res
-        .status(400)
-        .send({ message: "Não há itens vendidos ainda." });
+    if (sellings.length === 0) {
+      return res.status(400).send({ message: "Não há itens vendidos ainda." });
     }
 
-    return res.send(stock);
+    return res.send(sellings);
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -47,26 +42,20 @@ const findAll = async (req, res) => {
 
 const updateById = async (req, res) => {
   try {
-    const { item, company, size, amount, color } = req.body;
+    const { items, total_price, school } = req.body;
     const id = req.id;
 
-    if (!item && !company && !size && !amount && !color) {
+    if (!items && !total_price && !school) {
       return res
         .status(400)
-        .send({ message: "Pelo menos um campo deve ser preenchido." });
+        .send({ message: "Não foi possível atualizar a venda! Pelo menos um campo deve ser preenchido." });
     }
 
-    await updateByIdItemSellService(
-      id,
-      item,
-      size,
-      amount,
-      color
-    );
+    await updateByIdItemSellService(items, total_price, school);
 
     return res
       .status(200)
-      .send({ message: "Item no estoque foi atualizado com sucesso!" });
+      .send({ message: "Venda foi atualizada com sucesso!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }

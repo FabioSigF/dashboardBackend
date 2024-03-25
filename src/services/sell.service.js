@@ -4,8 +4,8 @@ const findAllItemSellService = () => Sell.find();
 7
 const createItemSellService = (body) => Sell.create(body);
 
-const updateByIdItemSellService = (item, size, amount, color) =>
-  Sell.findByIdAndUpdate({ _id: id }, { item, size, amount, color });
+const updateByIdItemSellService = (items, total_price, school) =>
+  Sell.findByIdAndUpdate({ _id: id }, { items, total_price, school});
 
 
 export {

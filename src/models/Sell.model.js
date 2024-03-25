@@ -1,20 +1,23 @@
 import mongoose from "mongoose";
+import Uniform from "./Uniform.model";
 
 const SellSchema = new mongoose.Schema({
-  item: {
-    type: mongoose.Schema.Types.ObjectId, //pega do estoque
-    required: true,
+  items: {
+    type: [Uniform],
+    required: true
   },
-  size: {
-    type: String,
-    required: true,
-  },
-  amount: {
+  total_price: {
     type: Number,
-    required: true,
+    required: true
   },
-  color: {
-    type: String,
+  school: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "schools",
+    required: true
+  },
+  date: {
+    type: Date,
+    default: Date.now,
   }
 }, {collection: "sellings"});
 
