@@ -2,6 +2,7 @@ import {
   createItemSellService,
   updateByIdItemSellService,
   findAllItemSellService,
+  findByDateService
 } from "../services/sell.service.js";
 
 const create = async (req, res) => {
@@ -60,4 +61,28 @@ const updateById = async (req, res) => {
     return res.status(500).send({ message: err.message });
   }
 };
-export { create, findAll, updateById };
+
+const findByDate = async(req, res) => {
+  try {
+    const {date_gte, date_lt} = req.body;
+
+    if(!date_gte || !date_lt) {
+      return res.status(400).send({message: "Não foi possível encontrar as vendas! Você deve informar a data inicial e a data final de busca."});
+    }
+
+    const newDateGte = date_gte.split("-");
+    const newDateLt = date_lt.split("-");
+
+    const sellings = await findByDateService(newDateGte, newDateLt);
+    
+    if (sellings.length === 0) {
+      return res.status(400).send({ message: "Não há itens vendidos nesse período." });
+    }
+
+    return res.send(sellings);
+
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+}
+export { create, findAll, updateById, findByDate };

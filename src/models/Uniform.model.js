@@ -31,5 +31,5 @@ const UniformSchema = new mongoose.Schema({
   }
 });
 
-const Uniform = mongoose.model("Uniform", UniformSchema);
-export default Uniform;
+// const Uniform = mongoose.model("Uniform", UniformSchema);
+export default UniformSchema;
