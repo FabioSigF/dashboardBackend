@@ -1,7 +1,8 @@
 import {
   createItemStockService,
-  updateByIdItemStockService,
   findAllItemStockService,
+  updateByIdItemStockService,
+  findStockByIdCompanyService,
 } from "../services/stock.service.js";
 
 const create = async (req, res) => {
@@ -71,17 +72,17 @@ const findByIdCompany = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const sellings = await findByIdCompanyService(id);
+    const stock = await findStockByIdCompanyService(id);
 
-    if (sellings.length == 0) {
+    if (stock.length == 0) {
       return res
         .status(400)
         .send({ message: "Não existem vendas dessa empresa." });
     }
 
-    return res.send(sellings);
+    return res.send(stock);
   } catch (error) {
     return res.status(500).send({ message: error.message });
   }
 };
-export { create, findAll, updateById };
+export { create, findAll, updateById, findByIdCompany };
