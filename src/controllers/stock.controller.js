@@ -3,6 +3,7 @@ import {
   findAllItemStockService,
   updateByIdItemStockService,
   findStockByIdCompanyService,
+  deleteStockItemById
 } from "../services/stock.service.js";
 
 const create = async (req, res) => {
@@ -85,4 +86,15 @@ const findByIdCompany = async (req, res) => {
     return res.status(500).send({ message: error.message });
   }
 };
-export { create, findAll, updateById, findByIdCompany };
+
+const deleteById = async(req, res) => {
+  try {
+    const {id} = req.params;
+    await deleteStockItemById(id);
+
+    return res.send({ message: "Item do estoque removido com sucesso!" });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+export { create, findAll, updateById, findByIdCompany, deleteById };

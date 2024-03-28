@@ -1,17 +1,23 @@
 import Stock from "../models/Stock.model.js";
 
 const findAllItemStockService = () => Stock.find();
-7
+
+const findStockById = (id) => Stock.findById(id);
+
 const createItemStockService = (body) => Stock.create(body);
 
 const updateByIdItemStockService = (item, company, size, amount, color) =>
   Stock.findByIdAndUpdate({ _id: id }, { item, company, size, amount, color });
 
-const findStockByIdCompanyService = (id) => Stock.find({company: id});
+const findStockByIdCompanyService = (id) => Stock.find({ company: id });
+
+const deleteStockItemById = (id) => Stock.findOneAndDelete({ _id: id });
 
 export {
   createItemStockService,
   updateByIdItemStockService,
   findAllItemStockService,
-  findStockByIdCompanyService
-}
+  findStockByIdCompanyService,
+  deleteStockItemById,
+  findStockById
+};
