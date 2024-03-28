@@ -2,23 +2,29 @@ import {
   createItemSellService,
   updateByIdItemSellService,
   findAllItemSellService,
-  findByDateService
+  findSellByDateService,
+  findSellByCompanyService,
 } from "../services/sell.service.js";
+
+import { findSchoolbyIdService } from "../services/school.service.js";
 
 const create = async (req, res) => {
   try {
     const { items, total_price, school } = req.body;
 
     if (!items || !total_price || !school) {
-      return res
-        .status(400)
-        .send({ message: "Não foi possível concluir a venda! Todos os campos devem ser preenchidos." });
+      return res.status(400).send({
+        message:
+          "Não foi possível concluir a venda! Todos os campos devem ser preenchidos.",
+      });
     }
+    
+    const schoolId = await findSchoolbyIdService(school);
 
     await createItemSellService({
       items,
       total_price,
-      school,
+      school: schoolId._id,
     });
 
     return res.status(201).send({ message: "Venda realizada com sucesso!" });
@@ -47,9 +53,10 @@ const updateById = async (req, res) => {
     const id = req.id;
 
     if (!items && !total_price && !school) {
-      return res
-        .status(400)
-        .send({ message: "Não foi possível atualizar a venda! Pelo menos um campo deve ser preenchido." });
+      return res.status(400).send({
+        message:
+          "Não foi possível atualizar a venda! Pelo menos um campo deve ser preenchido.",
+      });
     }
 
     await updateByIdItemSellService(items, total_price, school);
@@ -62,27 +69,49 @@ const updateById = async (req, res) => {
   }
 };
 
-const findByDate = async(req, res) => {
+const findByDate = async (req, res) => {
   try {
-    const {date_gte, date_lt} = req.body;
+    const { date_gte, date_lt } = req.body;
 
-    if(!date_gte || !date_lt) {
-      return res.status(400).send({message: "Não foi possível encontrar as vendas! Você deve informar a data inicial e a data final de busca."});
+    if (!date_gte || !date_lt) {
+      return res.status(400).send({
+        message:
+          "Não foi possível encontrar as vendas! Você deve informar a data inicial e a data final de busca."
+      });
     }
 
     const newDateGte = date_gte.split("-");
     const newDateLt = date_lt.split("-");
 
-    const sellings = await findByDateService(newDateGte, newDateLt);
-    
+    const sellings = await findSellByDateService(newDateGte, newDateLt);
+
     if (sellings.length === 0) {
-      return res.status(400).send({ message: "Não há itens vendidos nesse período." });
+      return res
+        .status(400)
+        .send({ message: "Não há itens vendidos nesse período." });
     }
 
     return res.send(sellings);
-
   } catch (error) {
     return res.status(500).send({ message: error.message });
   }
-}
-export { create, findAll, updateById, findByDate };
+};
+
+const findByIdCompany = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sellings = await findSellByCompanyService(id);
+
+    if (sellings.length == 0) {
+      return res
+        .status(400)
+        .send({ message: "Não existem vendas dessa empresa." });
+    }
+
+    return res.send(sellings);
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+export { create, findAll, updateById, findByDate, findByIdCompany };

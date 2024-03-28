@@ -57,20 +57,31 @@ const updateById = async (req, res) => {
         .send({ message: "Pelo menos um campo deve ser preenchido." });
     }
 
-    await updateByIdItemStockService(
-      id,
-      item,
-      company,
-      size,
-      amount,
-      color
-    );
+    await updateByIdItemStockService(id, item, company, size, amount, color);
 
     return res
       .status(200)
       .send({ message: "Item no estoque foi atualizado com sucesso!" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
+  }
+};
+
+const findByIdCompany = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sellings = await findByIdCompanyService(id);
+
+    if (sellings.length == 0) {
+      return res
+        .status(400)
+        .send({ message: "Não existem vendas dessa empresa." });
+    }
+
+    return res.send(sellings);
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
   }
 };
 export { create, findAll, updateById };

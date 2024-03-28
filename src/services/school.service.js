@@ -4,7 +4,10 @@ const createSchoolService = (body) => School.create(body);
 
 const getAllSchoolService = () => School.find();
 
+const findSchoolbyIdService = (id) => School.findById(id);
+
 export {
   createSchoolService,
-  getAllSchoolService
+  getAllSchoolService,
+  findSchoolbyIdService
 }

@@ -16,11 +16,6 @@ const UniformSchema = new mongoose.Schema({
   color: {
     type: String,
   },
-  school: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "schools",
-    required: true,
-  },
   price_unit: {
     type: Number,
     required: true,
