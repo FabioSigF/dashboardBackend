@@ -1,6 +1,9 @@
 import {
   createSchoolService,
   getAllSchoolService,
+  findSchoolByIdService,
+  updateSchoolByIdService,
+  deleteSchoolByIdService
 } from "../services/school.service.js";
 
 const create = async (req, res) => {
@@ -42,4 +45,48 @@ const getAll = async (_, res) => {
   }
 };
 
-export { create, getAll };
+const getById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const school = await findSchoolByIdService(id);
+
+    return res.send(school);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
+const updateById = async (req, res) => {
+  try {
+    const { name, category, colors, sizes } = req.body;
+    const { id } = req.params;
+
+    if (!name && !category && !sizes && !colors) {
+      return res.status(400).send({
+        message:
+          "Não foi possível atualizar a escola! Pelo menos um campo deve ser preenchido.",
+      });
+    }
+
+    await updateSchoolByIdService(id, name, category, colors, sizes);
+
+    return res
+      .status(200)
+      .send({ message: "Escola foi atualizada com sucesso!" });
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+};
+
+const deleteById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deleteSchoolByIdService(id);
+
+    return res.status(200).send({ message: "Escola excluída com sucesso!" });
+  } catch (error) {
+    return res.status(500).send({ message: err.message });
+  }
+};
+
+export { create, getAll, getById, updateById, deleteById };

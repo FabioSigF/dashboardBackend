@@ -8,6 +8,8 @@ import userRoute from "./src/routes/user.route.js";
 import authRoute from "./src/routes/auth.route.js";
 import stockRoute from "./src/routes/stock.route.js";
 import sellRoute from "./src/routes/sell.route.js";
+import scheduleRoute from "./src/routes/schedule.route.js";
+
 
 dotenv.config();
 
@@ -24,5 +26,6 @@ app.use("/user", userRoute);
 app.use("/auth", authRoute);
 app.use("/stock", stockRoute);
 app.use("/sell", sellRoute);
+app.use("/schedule", scheduleRoute);
 
 app.listen(port);

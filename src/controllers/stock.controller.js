@@ -3,7 +3,7 @@ import {
   findAllItemStockService,
   updateByIdItemStockService,
   findStockByIdCompanyService,
-  deleteStockItemById
+  deleteStockItemById,
 } from "../services/stock.service.js";
 
 const create = async (req, res) => {
@@ -51,7 +51,7 @@ const findAll = async (req, res) => {
 const updateById = async (req, res) => {
   try {
     const { item, company, size, amount, color } = req.body;
-    const id = req.id;
+    const { id } = req.params;
 
     if (!item && !company && !size && !amount && !color) {
       return res
@@ -87,14 +87,14 @@ const findByIdCompany = async (req, res) => {
   }
 };
 
-const deleteById = async(req, res) => {
+const deleteById = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     await deleteStockItemById(id);
 
     return res.send({ message: "Item do estoque removido com sucesso!" });
   } catch (error) {
     return res.status(500).send(error.message);
   }
-}
+};
 export { create, findAll, updateById, findByIdCompany, deleteById };

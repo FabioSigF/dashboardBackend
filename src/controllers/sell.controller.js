@@ -4,9 +4,10 @@ import {
   findAllItemSellService,
   findSellByDateService,
   findSellByCompanyService,
+  deleteSellByIdService,
 } from "../services/sell.service.js";
 
-import { findSchoolbyIdService } from "../services/school.service.js";
+import { findSchoolByIdService } from "../services/school.service.js";
 
 const create = async (req, res) => {
   try {
@@ -18,8 +19,8 @@ const create = async (req, res) => {
           "Não foi possível concluir a venda! Todos os campos devem ser preenchidos.",
       });
     }
-    
-    const schoolId = await findSchoolbyIdService(school);
+
+    const schoolId = await findSchoolByIdService(school);
 
     await createItemSellService({
       items,
@@ -50,7 +51,7 @@ const findAll = async (req, res) => {
 const updateById = async (req, res) => {
   try {
     const { items, total_price, school } = req.body;
-    const id = req.id;
+    const { id } = req.params;
 
     if (!items && !total_price && !school) {
       return res.status(400).send({
@@ -59,7 +60,7 @@ const updateById = async (req, res) => {
       });
     }
 
-    await updateByIdItemSellService(items, total_price, school);
+    await updateByIdItemSellService(id, items, total_price, school);
 
     return res
       .status(200)
@@ -76,7 +77,7 @@ const findByDate = async (req, res) => {
     if (!date_gte || !date_lt) {
       return res.status(400).send({
         message:
-          "Não foi possível encontrar as vendas! Você deve informar a data inicial e a data final de busca."
+          "Não foi possível encontrar as vendas! Você deve informar a data inicial e a data final de busca.",
       });
     }
 
@@ -114,4 +115,15 @@ const findByIdCompany = async (req, res) => {
     return res.status(500).send({ message: error.message });
   }
 };
-export { create, findAll, updateById, findByDate, findByIdCompany };
+
+const deleteById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deleteSellByIdService(id);
+
+    return res.send({ message: "Venda removida com sucesso!" });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+export { create, findAll, updateById, findByDate, findByIdCompany, deleteById };

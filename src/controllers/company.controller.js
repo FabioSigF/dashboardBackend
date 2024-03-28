@@ -1,4 +1,10 @@
-import { createCompanyService, getAllCompanyService } from "../services/company.service.js";
+import {
+  createCompanyService,
+  findCompanyByIdService,
+  getAllCompanyService,
+  updateCompanyByIdService,
+  deleteCompanyByIdService
+} from "../services/company.service.js";
 
 const create = async (req, res) => {
   try {
@@ -41,4 +47,48 @@ const getAll = async (_, res) => {
   }
 };
 
-export { create, getAll };
+const getById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const company = await findCompanyByIdService(id);
+
+    return res.send(company);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
+const updateById = async (req, res) => {
+  try {
+    const { name, cnpj, category, sizes, tel, cel } = req.body;
+    const { id } = req.params;
+
+    if (!name && !cnpj && !category && !sizes && !tel && !cel) {
+      return res.status(400).send({
+        message:
+          "Não foi possível atualizar a empresa! Pelo menos um campo deve ser preenchido.",
+      });
+    }
+
+    await updateCompanyByIdService(id, name, cnpj, category, sizes, tel, cel);
+
+    return res
+      .status(200)
+      .send({ message: "Empresa foi atualizada com sucesso!" });
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+};
+
+const deleteById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deleteCompanyByIdService(id);
+
+    return res.status(200).send({ message: "Empresa excluída com sucesso!" });
+  } catch (error) {
+    return res.status(500).send({ message: err.message });
+  }
+};
+
+export { create, getAll, getById, updateById, deleteById };

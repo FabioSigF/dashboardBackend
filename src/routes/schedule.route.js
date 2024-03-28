@@ -5,13 +5,14 @@ import {
   create,
   findAll,
   updateById,
-  findByIdCompany,
+  findByDate,
   deleteById
-} from "../controllers/stock.controller.js";
+} from "../controllers/schedule.controller.js";
+
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 router.get("/", findAll);
-router.get("/:id", findByIdCompany);
+router.get("/bydate", findByDate);
 router.post("/", create);
 router.patch("/:id", updateById);
 router.delete("/:id", deleteById);
