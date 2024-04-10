@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import UniformSchema from "./Uniform.model.js";
 
 const CompanySchema = new mongoose.Schema({
   name: {
@@ -12,12 +13,9 @@ const CompanySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  colors: {
-    type: Array,
-  },
-  sizes: {
-    type: Array,
-    required: true,
+  clothing: {
+    type: [UniformSchema],
+    required: true
   },
   tel: {
     type: String,

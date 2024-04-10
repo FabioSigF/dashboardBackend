@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import UniformSchema from "./Uniform.model.js";
+import SellItemSchema from "./SellItem.model.js";
 
 const SellSchema = new mongoose.Schema({
-  items: [UniformSchema],
+  items: [SellItemSchema],
   total_price: {
     type: Number,
     required: true

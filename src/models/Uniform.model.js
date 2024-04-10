@@ -5,25 +5,17 @@ const UniformSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  size: {
-    type: String,
+  sizes: {
+    type: [String],
     required: true,
   },
-  amount: {
+  colors: {
+    type: [String],
+  },
+  price: {
     type: Number,
     required: true,
   },
-  color: {
-    type: String,
-  },
-  price_unit: {
-    type: Number,
-    required: true,
-  },
-  total_price: {
-    type: Number,
-    required: true
-  }
 });
 
 // const Uniform = mongoose.model("Uniform", UniformSchema);
