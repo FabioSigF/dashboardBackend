@@ -7,9 +7,9 @@ const SellSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  school: {
+  company: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "schools",
+    ref: "companies",
     required: true
   },
   date: {

@@ -6,10 +6,10 @@ const getAllCompanyService = () => Company.find();
 
 const findCompanyByIdService = (id) => Company.findById(id);
 
-const updateCompanyByIdService = (id, name, cnpj, category, sizes, tel, cel) =>
+const updateCompanyByIdService = (id, name, cnpj, colors, category, sizes, tel, cel) =>
   Company.findByIdAndUpdate(
     { _id: id },
-    { name, cnpj, category, sizes, tel, cel }
+    { name, cnpj, colors, category, sizes, tel, cel }
   );
 
 const deleteCompanyByIdService = (id) => Company.findOneAndDelete(id);

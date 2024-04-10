@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDb from "./src/database/db.js";
 //Rotas
-import schoolRoute from "./src/routes/school.route.js";
 import companyRoute from "./src/routes/company.route.js";
 import userRoute from "./src/routes/user.route.js";
 import authRoute from "./src/routes/auth.route.js";
@@ -21,7 +20,6 @@ connectDb();
 
 app.use(express.json());
 app.use(cors());
-app.use("/school", schoolRoute);
 app.use("/company", companyRoute);
 app.use("/user", userRoute);
 app.use("/auth", authRoute);

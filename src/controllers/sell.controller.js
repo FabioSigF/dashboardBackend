@@ -7,8 +7,6 @@ import {
   deleteSellByIdService,
 } from "../services/sell.service.js";
 
-import { findSchoolByIdService } from "../services/school.service.js";
-
 const create = async (req, res) => {
   try {
     const { items, total_price, school } = req.body;
@@ -126,4 +124,5 @@ const deleteById = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+
 export { create, findAll, updateById, findByDate, findByIdCompany, deleteById };

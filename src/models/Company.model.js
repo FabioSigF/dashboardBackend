@@ -7,11 +7,13 @@ const CompanySchema = new mongoose.Schema({
   },
   cnpj: {
     type: String,
-    required: true,
   },
   category: {
     type: String,
     required: true,
+  },
+  colors: {
+    type: Array,
   },
   sizes: {
     type: Array,
@@ -22,7 +24,6 @@ const CompanySchema = new mongoose.Schema({
   },
   cel: {
     type: String,
-    required: true,
   },
   date: {
     type: Date,
