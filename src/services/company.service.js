@@ -20,7 +20,7 @@ const updateCompanyByIdService = (
     { name, cnpj, category, clothing, tel, cel }
   );
 
-const deleteCompanyByIdService = (id) => Company.findOneAndDelete(id);
+const deleteCompanyByIdService = (id) => Company.findOneAndDelete({ _id: id });
 
 export {
   createCompanyService,

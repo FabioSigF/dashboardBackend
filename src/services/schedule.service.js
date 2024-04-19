@@ -15,12 +15,13 @@ const findScheduleByDateService = (gte, lt) =>
     appointmentDate: { $gte: new Date(gte), $lt: new Date(lt) },
   });
 
-const deleteScheduleByIdService = (id) => Schedule.findOneAndDelete(id);
+const deleteScheduleByIdService = (id) =>
+  Schedule.findOneAndDelete({ _id: id });
 
 export {
   findAllScheduleService,
   createScheduleService,
   updateByIdScheduleService,
   findScheduleByDateService,
-  deleteScheduleByIdService
-}
+  deleteScheduleByIdService,
+};
