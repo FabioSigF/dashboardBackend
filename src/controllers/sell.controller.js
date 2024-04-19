@@ -79,6 +79,7 @@ const findAll = async (req, res) => {
         items: sell.items,
         date: sell.date,
         total_price: sell.total_price,
+        company_id: sell.company._id,
         company_name: sell.company.name,
       })),
     });
