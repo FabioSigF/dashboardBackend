@@ -53,13 +53,6 @@ const updateById = async (req, res) => {
     const { title, type, appointmentDate, isDone } = req.body;
     const { id } = req.params;
 
-    if (!title && !type && !appointmentDate && !isDone) {
-      return res.status(400).send({
-        message:
-          "Não foi possível atualizar o compromisso! Pelo menos um campo deve ser preenchido.",
-      });
-    }
-
     await updateByIdScheduleService(id, title, type, appointmentDate, isDone);
 
     return res
