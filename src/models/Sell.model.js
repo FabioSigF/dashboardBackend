@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import SellItemSchema from "./SellItem.model.js";
+import Company from "./Company.model.js";
 
 const SellSchema = new mongoose.Schema({
   items: [SellItemSchema],
@@ -9,7 +10,7 @@ const SellSchema = new mongoose.Schema({
   },
   company: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "companies",
+    ref: "Company",
     required: true
   },
   date: {

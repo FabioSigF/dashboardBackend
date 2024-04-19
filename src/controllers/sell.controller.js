@@ -1,3 +1,4 @@
+import { findCompanyByIdService } from "../services/company.service.js";
 import {
   createItemSellService,
   updateByIdItemSellService,
@@ -5,25 +6,26 @@ import {
   findSellByDateService,
   findSellByCompanyService,
   deleteSellByIdService,
+  countSellService,
 } from "../services/sell.service.js";
 
 const create = async (req, res) => {
   try {
-    const { items, total_price, school } = req.body;
+    const { items, total_price, company } = req.body;
 
-    if (!items || !total_price || !school) {
+    if (!items || !total_price || !company) {
       return res.status(400).send({
         message:
           "Não foi possível concluir a venda! Todos os campos devem ser preenchidos.",
       });
     }
 
-    const schoolId = await findSchoolByIdService(school);
+    const companyItem = await findCompanyByIdService(company);
 
     await createItemSellService({
       items,
       total_price,
-      school: schoolId._id,
+      company: companyItem._id,
     });
 
     return res.status(201).send({ message: "Venda realizada com sucesso!" });
@@ -34,31 +36,73 @@ const create = async (req, res) => {
 
 const findAll = async (req, res) => {
   try {
-    const sellings = await findAllItemSellService();
+    let { limit, offset } = req.query; //offset é qual o índice do item inicial. Ele é usado como skip
 
-    if (sellings.length === 0) {
-      return res.status(400).send({ message: "Não há itens vendidos ainda." });
+    limit = Number(limit);
+    offset = Number(offset);
+
+    if (!limit) {
+      limit = 5;
+    }
+    if (!offset) {
+      offset = 0;
     }
 
-    return res.send(sellings);
+    const sellings = await findAllItemSellService(limit, offset);
+
+    const total = await countSellService();
+
+    const currentUrl = req.baseUrl;
+
+    const next = offset + limit;
+    const nextUrl =
+      next < total ? `${currentUrl}?limit=#${limit}&offset=${next}` : null;
+
+    const previous = offset - limit < 0 ? null : offset - limit;
+
+    const previousUrl =
+      previous != null
+        ? `${currentUrl}?limit=#${limit}&offset=${previous}`
+        : null;
+
+    if (sellings.length === 0) {
+      return res.status(400).send({ message: "Não existem vendas." });
+    }
+    return res.send({
+      nextUrl,
+      previousUrl,
+      limit,
+      offset,
+      total,
+      response: sellings.map((sell) => ({
+        id: sell._id,
+        items: sell.items,
+        date: sell.date,
+        total_price: sell.total_price,
+        company_name: sell.company.name,
+      })),
+    });
+   
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
+
+  
 };
 
 const updateById = async (req, res) => {
   try {
-    const { items, total_price, school } = req.body;
+    const { items, total_price, company } = req.body;
     const { id } = req.params;
 
-    if (!items && !total_price && !school) {
+    if (!items && !total_price && !company) {
       return res.status(400).send({
         message:
           "Não foi possível atualizar a venda! Pelo menos um campo deve ser preenchido.",
       });
     }
 
-    await updateByIdItemSellService(id, items, total_price, school);
+    await updateByIdItemSellService(id, items, total_price, company);
 
     return res
       .status(200)

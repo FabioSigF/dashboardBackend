@@ -1,6 +1,9 @@
+import Company from "../models/Company.model.js";
 import Sell from "../models/Sell.model.js";
 
-const findAllItemSellService = () => Sell.find();
+const findAllItemSellService = (limit, offset) => 
+  Sell.find().sort({ _id: -1 }).skip(offset).limit(limit).populate("company").exec();
+
 
 const createItemSellService = (body) => Sell.create(body);
 
@@ -25,5 +28,5 @@ export {
   countSellService,
   findSellByDateService,
   findSellByCompanyService,
-  deleteSellByIdService
+  deleteSellByIdService,
 };
