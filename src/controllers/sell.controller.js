@@ -9,6 +9,11 @@ import {
   countSellService,
 } from "../services/sell.service.js";
 
+import {
+  findStockByIdCompanyService,
+  updateByIdItemStockService,
+} from "../services/stock.service.js";
+
 const create = async (req, res) => {
   try {
     const { items, total_price, company } = req.body;
@@ -21,6 +26,34 @@ const create = async (req, res) => {
     }
 
     const companyItem = await findCompanyByIdService(company);
+
+    const stock = await findStockByIdCompanyService(companyItem._id);
+
+    items.forEach(async (itemSell) => {
+      const resStock = stock.find(
+        (stockItem) =>
+          stockItem.item === itemSell.name &&
+          stockItem.color === itemSell.color &&
+          stockItem.size === itemSell.size
+      );
+
+      if (resStock && resStock.amount > 0 && itemSell.amount < resStock.amount) {
+        await updateByIdItemStockService(
+          resStock._id,
+          resStock.item,
+          resStock.company,
+          resStock.size,
+          resStock.amount - 1,
+          resStock.color
+        );
+      } else
+        return res
+          .status(400)
+          .send({
+            message:
+              "Venda não pode ser realizada. Não há unidades suficientes no estoque!",
+          });
+    });
 
     await createItemSellService({
       items,
@@ -81,15 +114,12 @@ const findAll = async (req, res) => {
         total_price: sell.total_price,
         company_id: sell.company._id,
         company_name: sell.company.name,
-        company_category: sell.company.category
+        company_category: sell.company.category,
       })),
     });
-   
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
-
-  
 };
 
 const updateById = async (req, res) => {
