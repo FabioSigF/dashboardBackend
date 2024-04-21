@@ -102,7 +102,6 @@ const deleteById = async (req, res) => {
 const findByAmout = async (req, res) => {
   try {
     const { amount } = req.params;
-    console.log(amount)
     const response = await findStockByAmountService(amount);
 
     if (res !== null || res.length == 0) {
