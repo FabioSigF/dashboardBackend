@@ -3,7 +3,8 @@ import {
   findAllItemStockService,
   updateByIdItemStockService,
   findStockByIdCompanyService,
-  deleteStockItemById,
+  deleteStockItemByIdService,
+  findStockByAmountService,
 } from "../services/stock.service.js";
 
 const create = async (req, res) => {
@@ -90,11 +91,35 @@ const findByIdCompany = async (req, res) => {
 const deleteById = async (req, res) => {
   try {
     const { id } = req.params;
-    await deleteStockItemById(id);
+    await deleteStockItemByIdService(id);
 
     return res.send({ message: "Item do estoque removido com sucesso!" });
   } catch (error) {
     return res.status(500).send(error.message);
   }
 };
-export { create, findAll, updateById, findByIdCompany, deleteById };
+
+const findByAmout = async (req, res) => {
+  try {
+    const { amount } = req.params;
+    console.log(amount)
+    const response = await findStockByAmountService(amount);
+
+    if (res !== null || res.length == 0) {
+      return res.send(response);
+    } else
+      return res.send({
+        message: `Não há itens com ${amount} ou menos unidades no estoque.`,
+      });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+export {
+  create,
+  findAll,
+  updateById,
+  findByIdCompany,
+  deleteById,
+  findByAmout,
+};

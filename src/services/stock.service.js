@@ -2,7 +2,7 @@ import Stock from "../models/Stock.model.js";
 
 const findAllItemStockService = () => Stock.find();
 
-const findStockById = (id) => Stock.findById(id);
+const findStockByIdService = (id) => Stock.findById(id);
 
 const createItemStockService = (body) => Stock.create(body);
 
@@ -11,13 +11,17 @@ const updateByIdItemStockService = (id, item, company, size, amount, color) =>
 
 const findStockByIdCompanyService = (id) => Stock.find({ company: id });
 
-const deleteStockItemById = (id) => Stock.findOneAndDelete({ _id: id });
+//Retorna itens que possuem amout menor ou igual ao fornecido
+const findStockByAmountService = (amount) => Stock.find({ amount: { $lte: amount } });
+
+const deleteStockItemByIdService = (id) => Stock.findOneAndDelete({ _id: id });
 
 export {
   createItemStockService,
   updateByIdItemStockService,
   findAllItemStockService,
   findStockByIdCompanyService,
-  deleteStockItemById,
-  findStockById
+  deleteStockItemByIdService,
+  findStockByIdService,
+  findStockByAmountService
 };
