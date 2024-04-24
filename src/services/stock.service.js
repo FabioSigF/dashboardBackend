@@ -14,6 +14,8 @@ const findStockByIdCompanyService = (id) => Stock.find({ company: id });
 //Retorna itens que possuem amout menor ou igual ao fornecido
 const findStockByAmountService = (amount) => Stock.find({ amount: { $lte: amount } });
 
+const findStockByAmountAndCompanyService = (amount, id) => Stock.find({ _id: id, amount: { $lte: amount } });
+
 const deleteStockItemByIdService = (id) => Stock.findOneAndDelete({ _id: id });
 
 export {
@@ -23,5 +25,6 @@ export {
   findStockByIdCompanyService,
   deleteStockItemByIdService,
   findStockByIdService,
-  findStockByAmountService
+  findStockByAmountService,
+  findStockByAmountAndCompanyService
 };
