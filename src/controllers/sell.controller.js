@@ -315,6 +315,33 @@ const findByIdCompany = async (req, res) => {
 const deleteById = async (req, res) => {
   try {
     const { id } = req.params;
+
+    //Encontrar venda
+    const sell = await findSellByIdService(id);
+    const stock = await findStockByIdCompanyService(sell.company);
+
+    console.log(sell);
+
+    sell.items.forEach(async(item) => {
+      const resStock = stock.find(
+        (stockItem) =>
+          stockItem.item === item.name &&
+          stockItem.color === item.color &&
+          stockItem.size === item.size
+      );
+
+      if(resStock) {
+        await updateByIdItemStockService(
+          resStock._id,
+          resStock.item,
+          resStock.company,
+          resStock.size,
+          resStock.amount + item.amount,
+          resStock.color
+        );
+      }
+    })
+
     await deleteSellByIdService(id);
 
     return res.send({ message: "Venda removida com sucesso!" });
