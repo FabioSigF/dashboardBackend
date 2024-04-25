@@ -7,6 +7,8 @@ import {
 } from "../services/company.service.js";
 import {
   createItemStockService,
+  deleteStockItemByIdService,
+  findStockByIdCompanyService,
 } from "../services/stock.service.js";
 
 const create = async (req, res) => {
@@ -41,7 +43,7 @@ const create = async (req, res) => {
             company: newCompany._id,
             size: clothSize,
             amount: 0, // Quantidade inicial zero
-            color: clothColor
+            color: clothColor,
           });
         }
       }
@@ -115,6 +117,12 @@ const deleteById = async (req, res) => {
     const { id } = req.params;
     await deleteCompanyByIdService(id);
 
+    const stock = await findStockByIdCompanyService(id);
+
+    stock.forEach(async (item) => {
+      await deleteStockItemByIdService(item._id);
+    });
+    
     return res.status(200).send({ message: "Empresa excluída com sucesso!" });
   } catch (error) {
     return res.status(500).send({ message: err.message });
