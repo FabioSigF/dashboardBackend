@@ -20,7 +20,10 @@ const findSellByDateService = (gte, lt) =>
 //Usado tanto para encontrar escolas como empresas
 const findSellByCompanyService = (schoolId) => Sell.find({ school: schoolId });
 
+const findSellByIdService = (id) => Sell.findById(id);
+
 const deleteSellByIdService = (id) => Sell.findOneAndDelete({ _id: id });
+
 export {
   createItemSellService,
   updateByIdItemSellService,
@@ -29,4 +32,6 @@ export {
   findSellByDateService,
   findSellByCompanyService,
   deleteSellByIdService,
+  findSellByIdService,
+  
 };

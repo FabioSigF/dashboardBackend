@@ -7,6 +7,7 @@ import {
   findSellByCompanyService,
   deleteSellByIdService,
   countSellService,
+  findSellByIdService,
 } from "../services/sell.service.js";
 
 import {
@@ -37,22 +38,24 @@ const create = async (req, res) => {
           stockItem.size === itemSell.size
       );
 
-      if (resStock && resStock.amount > 0 && itemSell.amount < resStock.amount) {
+      if (
+        resStock &&
+        resStock.amount > 0 &&
+        itemSell.amount <= resStock.amount
+      ) {
         await updateByIdItemStockService(
           resStock._id,
           resStock.item,
           resStock.company,
           resStock.size,
-          resStock.amount - 1,
+          resStock.amount - itemSell.amount,
           resStock.color
         );
       } else
-        return res
-          .status(400)
-          .send({
-            message:
-              "Venda não pode ser realizada. Não há unidades suficientes no estoque!",
-          });
+        return res.status(400).send({
+          message:
+            "Venda não pode ser realizada. Não há unidades suficientes no estoque!",
+        });
     });
 
     await createItemSellService({
@@ -122,6 +125,17 @@ const findAll = async (req, res) => {
   }
 };
 
+const findById = async (req, res) => {
+  try {
+    const { id } = req.params();
+    const sell = await findSellByIdService(id);
+
+    return res.send(sell);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
 const updateById = async (req, res) => {
   try {
     const { items, total_price, company } = req.body;
@@ -133,6 +147,114 @@ const updateById = async (req, res) => {
           "Não foi possível atualizar a venda! Pelo menos um campo deve ser preenchido.",
       });
     }
+
+    const prevSell = await findSellByIdService(id);
+
+    const stock = await findStockByIdCompanyService(prevSell.company);
+
+    //Faz atualização com base na nova lista. Se um item da nova lista já existia, atualiza. Se não exisita, cria
+    items.forEach(async (itemSell) => {
+      const hasBefore = prevSell.items.find(
+        (prevItem) =>
+          prevItem.name === itemSell.name &&
+          prevItem.color === itemSell.color &&
+          prevItem.size === itemSell.size
+      );
+      //Se item já existia, verifica se a quantidade do item mudou e, dependendo da resposta, devolve ou retira do estoque
+      if (hasBefore) {
+        const amountChange = itemSell.amount - hasBefore.amount;
+        //Se a quantidade de itens vendidos mudou
+        if (amountChange != 0) {
+          const resStock = stock.find(
+            (stockItem) =>
+              stockItem.item === itemSell.name &&
+              stockItem.color === itemSell.color &&
+              stockItem.size === itemSell.size
+          );
+
+          //Se eu atualizei para uma quantidade maior, retiro do estoque
+          if (amountChange < 0 && resStock.amount > amountChange * -1) {
+            await updateByIdItemStockService(
+              resStock._id,
+              resStock.item,
+              resStock.company,
+              resStock.size,
+              resStock.amount - amountChange,
+              resStock.color
+            );
+          } else if (amountChange > 0 && resStock.amount > amountChange) {
+            //Se eu atualizei para uma quantidade menor, devolvo ao estoque
+            await updateByIdItemStockService(
+              resStock._id,
+              resStock.item,
+              resStock.company,
+              resStock.size,
+              resStock.amount - amountChange,
+              resStock.color
+            );
+          } else
+            return res.status(400).send({
+              message:
+                "Venda não pode ser realizada. Não há unidades suficientes no estoque!",
+            });
+        }
+      } else {
+        //Novo item, verifica e retira do estoque
+
+        const resStock = stock.find(
+          (stockItem) =>
+            stockItem.item === itemSell.name &&
+            stockItem.color === itemSell.color &&
+            stockItem.size === itemSell.size
+        );
+
+        if (
+          resStock &&
+          resStock.amount > 0 &&
+          resStock.amount >= itemSell.amount
+        ) {
+          await updateByIdItemStockService(
+            resStock._id,
+            resStock.item,
+            resStock.company,
+            resStock.size,
+            resStock.amount - itemSell.amount,
+            resStock.color
+          );
+        } else
+          return res.status(400).send({
+            message:
+              "Venda não pode ser realizada. Não há unidades suficientes no estoque!",
+          });
+      }
+    });
+
+    //Faz atualização com base na lista anterior. Se um item existia mas não existe mais, é removido e estoque atualizado.
+    prevSell.items.forEach(async (prevItem) => {
+      const hasItem = items.find(
+        (itemSell) =>
+          prevItem.name === itemSell.name &&
+          prevItem.color === itemSell.color &&
+          prevItem.size === itemSell.size
+      );
+
+      if (!hasItem) {
+        const resStock = stock.find(
+          (stockItem) =>
+            stockItem.item === prevItem.name &&
+            stockItem.color === prevItem.color &&
+            stockItem.size === prevItem.size
+        );
+        await updateByIdItemStockService(
+          resStock._id,
+          resStock.item,
+          resStock.company,
+          resStock.size,
+          resStock.amount + prevItem.amount,
+          resStock.color
+        );
+      }
+    });
 
     await updateByIdItemSellService(id, items, total_price, company);
 
@@ -201,4 +323,12 @@ const deleteById = async (req, res) => {
   }
 };
 
-export { create, findAll, updateById, findByDate, findByIdCompany, deleteById };
+export {
+  create,
+  findAll,
+  updateById,
+  findByDate,
+  findByIdCompany,
+  findById,
+  deleteById,
+};
