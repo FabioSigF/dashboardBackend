@@ -3,8 +3,11 @@ import {
   findCompanyByIdService,
   getAllCompanyService,
   updateCompanyByIdService,
-  deleteCompanyByIdService
+  deleteCompanyByIdService,
 } from "../services/company.service.js";
+import {
+  createItemStockService,
+} from "../services/stock.service.js";
 
 const create = async (req, res) => {
   try {
@@ -16,7 +19,7 @@ const create = async (req, res) => {
       });
     }
 
-    await createCompanyService({
+    const newCompany = await createCompanyService({
       name,
       cnpj,
       category,
@@ -25,11 +28,30 @@ const create = async (req, res) => {
       cel,
     });
 
+    for (const cloth of newCompany.clothing) {
+      const sizes = cloth.sizes;
+      const colors = cloth.colors;
+
+      // Iterar sobre cada tamanho e cor da peça de roupa
+      for (const clothSize of sizes) {
+        for (const clothColor of colors) {
+          // Criar um item de estoque para a combinação de tamanho e cor
+          await createItemStockService({
+            item: cloth.name,
+            company: newCompany._id,
+            size: clothSize,
+            amount: 0, // Quantidade inicial zero
+            color: clothColor
+          });
+        }
+      }
+    }
+
     return res.status(201).send({ message: "Empresa cadastrada com sucesso!" });
   } catch (error) {
     return res
       .status(500)
-      .send({ message: "Ocorreu um erro ao cadastrar da empresa." });
+      .send({ message: `Ocorreu um erro ao cadastrar da empresa. ${error}` });
   }
 };
 
@@ -70,7 +92,15 @@ const updateById = async (req, res) => {
       });
     }
 
-    await updateCompanyByIdService(id, name, cnpj, category, clothing, tel, cel);
+    await updateCompanyByIdService(
+      id,
+      name,
+      cnpj,
+      category,
+      clothing,
+      tel,
+      cel
+    );
 
     return res
       .status(200)
