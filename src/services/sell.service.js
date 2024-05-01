@@ -1,9 +1,13 @@
 import Company from "../models/Company.model.js";
 import Sell from "../models/Sell.model.js";
 
-const findAllItemSellService = (limit, offset) => 
-  Sell.find().sort({ _id: -1 }).skip(offset).limit(limit).populate("company").exec();
-
+const findAllItemSellService = (limit, offset) =>
+  Sell.find()
+    .sort({ _id: -1 })
+    .skip(offset)
+    .limit(limit)
+    .populate("company")
+    .exec();
 
 const createItemSellService = (body) => Sell.create(body);
 
@@ -17,8 +21,10 @@ const findSellByDateService = (gte, lt) =>
     date: { $gte: new Date(gte), $lt: new Date(lt) },
   });
 
-//Usado tanto para encontrar escolas como empresas
 const findSellByCompanyService = (schoolId) => Sell.find({ school: schoolId });
+
+const findSellingsByCompanyAndDateService = (id, gte, lt) =>
+  Sell.find({ company: id , date: { $gte: new Date(gte), $lt: new Date(lt) } });
 
 const findSellByIdService = (id) => Sell.findById(id);
 
@@ -33,5 +39,5 @@ export {
   findSellByCompanyService,
   deleteSellByIdService,
   findSellByIdService,
-  
+  findSellingsByCompanyAndDateService,
 };

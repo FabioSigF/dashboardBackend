@@ -7,13 +7,15 @@ import {
   updateById,
   findByIdCompany,
   deleteById,
-  findByDate
+  findByDate,
+  findByCompanyAndDate
 } from "../controllers/sell.controller.js";
 
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 router.get("/", findAll);
 router.get("/bydate", findByDate);
+router.get("/bydate/:id", findByCompanyAndDate);
 router.get("/:id", findByIdCompany);
 router.post("/", create);
 router.patch("/:id", updateById);

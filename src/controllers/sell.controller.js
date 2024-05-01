@@ -8,6 +8,7 @@ import {
   deleteSellByIdService,
   countSellService,
   findSellByIdService,
+  findSellingsByCompanyAndDateService,
 } from "../services/sell.service.js";
 
 import {
@@ -312,6 +313,38 @@ const findByIdCompany = async (req, res) => {
   }
 };
 
+const findByCompanyAndDate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date_gte, date_lt } = req.body;
+
+    if (!date_gte || !date_lt) {
+      return res.status(400).send({
+        message: "Você deve informar a data inicial e a data final de busca.",
+      });
+    }
+
+    const newDateGte = date_gte.split("-");
+    const newDateLt = date_lt.split("-");
+
+    const sellings = await findSellingsByCompanyAndDateService(
+      id,
+      newDateGte,
+      newDateLt
+    );
+
+    if (sellings.length === 0) {
+      return res
+        .status(400)
+        .send({ message: "Não há itens vendidos por essa empresa, nesse período." });
+    }
+
+    return res.send(sellings);
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
 const deleteById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -322,7 +355,7 @@ const deleteById = async (req, res) => {
 
     console.log(sell);
 
-    sell.items.forEach(async(item) => {
+    sell.items.forEach(async (item) => {
       const resStock = stock.find(
         (stockItem) =>
           stockItem.item === item.name &&
@@ -330,7 +363,7 @@ const deleteById = async (req, res) => {
           stockItem.size === item.size
       );
 
-      if(resStock) {
+      if (resStock) {
         await updateByIdItemStockService(
           resStock._id,
           resStock.item,
@@ -340,7 +373,7 @@ const deleteById = async (req, res) => {
           resStock.color
         );
       }
-    })
+    });
 
     await deleteSellByIdService(id);
 
@@ -358,4 +391,5 @@ export {
   findByIdCompany,
   findById,
   deleteById,
+  findByCompanyAndDate
 };
