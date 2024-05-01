@@ -335,7 +335,6 @@ const findByCompanyAndDate = async (req, res) => {
 
     if (sellings.length === 0) {
       return res
-        .status(400)
         .send({ message: "Não há itens vendidos por essa empresa, nesse período." });
     }
 
