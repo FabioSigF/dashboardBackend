@@ -269,7 +269,7 @@ const updateById = async (req, res) => {
 
 const findByDate = async (req, res) => {
   try {
-    const { date_gte, date_lt } = req.body;
+    const { date_gte, date_lt } = req.query;
 
     if (!date_gte || !date_lt) {
       return res.status(400).send({
@@ -316,7 +316,7 @@ const findByIdCompany = async (req, res) => {
 const findByCompanyAndDate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { date_gte, date_lt } = req.body;
+    const { date_gte, date_lt } = req.query;
 
     if (!date_gte || !date_lt) {
       return res.status(400).send({
