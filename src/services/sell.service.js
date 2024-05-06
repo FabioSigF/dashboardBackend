@@ -21,7 +21,7 @@ const findSellByDateService = (gte, lt) =>
     date: { $gte: new Date(gte), $lt: new Date(lt) },
   });
 
-const findSellByCompanyService = (schoolId) => Sell.find({ school: schoolId });
+const findSellByCompanyService = (id) => Sell.find({ company: id });
 
 const findSellingsByCompanyAndDateService = (id, gte, lt) =>
   Sell.find({ company: id , date: { $gte: new Date(gte), $lt: new Date(lt) } });
