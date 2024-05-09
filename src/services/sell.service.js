@@ -1,9 +1,8 @@
-import Company from "../models/Company.model.js";
 import Sell from "../models/Sell.model.js";
 
 const findAllItemSellService = (limit, offset) =>
   Sell.find()
-    .sort({ _id: -1 })
+    .sort({ date: -1 })
     .skip(offset)
     .limit(limit)
     .populate("company")
